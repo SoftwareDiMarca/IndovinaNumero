@@ -54,15 +54,18 @@ public class IndoNumeroController {
     @FXML
     void handleNuovaPartita(ActionEvent event) {
     	
-    	this.segreto = (int) Math.random() * NMAX + 1;
+    	this.segreto = (int)(Math.random() * NMAX) + 1;
     	this.tentativi = 0;
     	this.inGame = true;
     	
-    	this.bottoneNuovaPartita.setDisable(true);
-    	this.textRisposta.setDisable(false);
-    	this.boxDiGioco.setDisable(false);
+    	bottoneNuovaPartita.setDisable(true);
+    	textRisposta.setDisable(false);
+    	boxDiGioco.setDisable(false);
     	numTentativi.setText(String.format("%d", this.tentativi));
-    	tentativiTotali.setText(String.format("%d", this.TMAX));    	
+    	tentativiTotali.setText(String.format("%d", this.TMAX)); 
+    	textRisposta.clear();
+    	txtTentativo.clear();
+    	textRisposta.appendText(String.format("Indovina un numero tra %d e %d\n", 1, NMAX));
     }
 
 
@@ -76,8 +79,43 @@ public class IndoNumeroController {
     		return;
     	}
 		
-		
-    				
+		try {		
+			int num = Integer.parseInt(numString);  //se non è numero lancia un'eccezione NumberFormatException
+			if(num == segreto) {
+				//ha indovinato
+				textRisposta.appendText("Hai vinto!\n");
+				//chiudi la partita
+				boxDiGioco.setDisable(true);
+				bottoneNuovaPartita.setDisable(false);
+				inGame = false;
+			}
+			else {
+				//tentativo errato
+				tentativi++;
+				numTentativi.setText(String.format("%d", this.tentativi));
+				if(this.tentativi == this.TMAX) {
+					//ha perso
+					textRisposta.appendText(String.format("Hai perso! Il numero era: %d\n", this.segreto));
+					boxDiGioco.setDisable(true);
+					bottoneNuovaPartita.setDisable(false);
+					inGame = false;
+				}
+				else {
+					//sono ancora in gioco
+					if(num < segreto) {
+						//troppo basso
+						textRisposta.appendText("Troppo basso\n");
+					}
+					else {
+						//troppo alto
+						textRisposta.appendText("troppo alto\n");
+					}
+				}
+			}
+		} catch(NumberFormatException ex) {			
+			textRisposta.appendText("Il dato inserito non è numerico\n");
+			return;
+		}
 
     }
 
